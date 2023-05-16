@@ -1,8 +1,8 @@
 {
-  "name": "javascript-unit-testing-template-with-mocha-and-chai",
-  "version": "1.0.0-SNAPSHOT",
-  "author": "Wil Pannell <wil.pannell@gmail.com>",
-  "description": "javascript unit testing infrastructure",
+  "name": "code-challenge",
+  "version": "1.0.0",
+  "author": "Khizir Putcygov <kputcygov@gmail.com>",
+  "description": "code challenge",
   "scripts": {
     "test": "make test"
   },
