@@ -1,0 +1,21 @@
+{
+  "name": "javascript-unit-testing-template-with-mocha-and-chai",
+  "version": "1.0.0-SNAPSHOT",
+  "author": "Wil Pannell <wil.pannell@gmail.com>",
+  "description": "javascript unit testing infrastructure",
+  "scripts": {
+    "test": "make test"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "chai": "~1.4.2",
+    "esm": "^3.2.25",
+    "mocha": "^10.2.0"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.1"
+  }
+}

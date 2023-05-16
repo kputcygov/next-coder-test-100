@@ -21,6 +21,17 @@ There are many ways to do this - feel free to google your options. We want to se
 2. An explanation of why you would choose this particular method.
 3. A unit test!
 
+### Solution
+
+2. new Set() has linear complexity and therefore is a good choice for a function to remove duplicates from an array
+3. A unit test has been added
+
+To test the function:
+
+```npm install```
+
+```npm run test```
+
 ## 2. Booking system data schema
 
 Imagine you are implementing a booking system for a peer2peer car share. 
