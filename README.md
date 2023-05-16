@@ -23,6 +23,8 @@ There are many ways to do this - feel free to google your options. We want to se
 
 ### Solution
 
+#### Prerequisites: make, node, npm
+
 2. new Set() has linear complexity and therefore is a good choice for a function to remove duplicates from an array
 3. A unit test has been added
 
@@ -73,6 +75,89 @@ There are many ways to do this - feel free to google your options. We want to se
 2. Example of how the query would look
 3. Why is this solution better than some alternative?
 
+### Solution
+
+#### Prerequisites: Postgres DBMS
+
+An SQL dump example:
+
+```
+CREATE TABLE Users (
+id SERIAL PRIMARY KEY,
+name VARCHAR(255)
+);
+
+CREATE TABLE Cars (
+id SERIAL PRIMARY KEY,
+owner_id INT,
+make VARCHAR(255),
+model VARCHAR(255),
+FOREIGN KEY (owner_id) REFERENCES Users(id)
+);
+
+CREATE TABLE Bookings (
+id SERIAL PRIMARY KEY,
+borrower_id INT,
+car_id INT,
+start_time TIMESTAMPTZ,
+end_time TIMESTAMPTZ,
+FOREIGN KEY (borrower_id) REFERENCES Users(id),
+FOREIGN KEY (car_id) REFERENCES Cars(id)
+);
+
+-- Seeding
+INSERT INTO Users (name)
+VALUES ('User A'),
+('User B'),
+('User C');
+
+INSERT INTO Cars (make, model, owner_id)
+VALUES ('Toyota', 'Camry', 1),
+('Honda', 'Civic', 2),
+('Ford', 'Focus', 3);
+
+INSERT INTO Bookings (borrower_id, car_id, start_time, end_time)
+VALUES (2, 1, '2023-05-17 09:00:00+00:00', '2023-05-17 12:00:00+00:00'),
+(3, 3, '2023-05-18 14:00:00+00:00', '2023-05-18 16:00:00+00:00');
+```
+
+For the provided seeded bookings the following would give __booked cars__ for the range __2023-05-17 10:00:00 - 2023-05-17 12:00:00__:
+```
+SELECT c.id, c.make, c.model, c.owner_id
+FROM Cars c
+LEFT JOIN Bookings b ON c.id = b.car_id
+WHERE (b.start_time, b.end_time) overlaps ('2023-05-17 10:00:00', '2023-05-17 12:00:00');
+```
+
+__available cars__ for the range __2023-05-17 10:00:00 - 2023-05-17 12:00:00__:
+```
+SELECT c.id, c.make, c.model, c.owner_id
+FROM Cars c
+WHERE c.id NOT IN (
+    SELECT car_id
+    FROM Bookings
+    WHERE start_time <= '2023-05-17 10:00:00'
+    AND end_time >= '2023-05-17 12:00:00'
+);
+```
+
+show booked or not for the range __2023-05-17 10:00:00 - 2023-05-17 12:00:00__:
+
+```
+SELECT c.id, c.make, c.model, c.owner_id,
+case
+when (b.start_time, b.end_time) overlaps ('2023-05-17 10:00:00', '2023-05-17 12:00:00')
+then true
+else false
+end as booked
+FROM Cars c
+FULL JOIN Bookings b ON c.id = b.car_id;
+```
+
+
+__Why is this solution better than some alternative?__
+
+It makes use of Postgres 'overlaps' function. DBMS functions are very efficient and therefore making use of them should perform well even for large databases.
 
 ## 3. FrontOps
 
