@@ -79,6 +79,8 @@ There are many ways to do this - feel free to google your options. We want to se
 
 #### Prerequisites: Postgres DBMS
 
+1. Some kind of schema (e.g. sqldump, JSON)
+
 An SQL dump example:
 
 ```
@@ -121,6 +123,8 @@ VALUES (2, 1, '2023-05-17 09:00:00+00:00', '2023-05-17 12:00:00+00:00'),
 (3, 3, '2023-05-18 14:00:00+00:00', '2023-05-18 16:00:00+00:00');
 ```
 
+2. Example of how the query would look
+
 For the provided seeded bookings the following would give __booked cars__ for the range __2023-05-17 10:00:00 - 2023-05-17 12:00:00__:
 ```
 SELECT c.id, c.make, c.model, c.owner_id
@@ -155,7 +159,7 @@ FULL JOIN Bookings b ON c.id = b.car_id;
 ```
 
 
-__Why is this solution better than some alternative?__
+3. Why is this solution better than some alternative?
 
 It makes use of Postgres 'overlaps' function. DBMS functions are very efficient and therefore making use of them should perform well even for large databases.
 
@@ -173,6 +177,26 @@ We want to see:
 2. A list of steps you need to take to change the FQDN of the API (API_BASE_URL) for production or staging
 3. How would you handle new versions of the API?
 
-## Submitting your solution
+### Solution
 
-Please submit your solution as a PR including some nice commits for challenge 1 and the rest in Markdown.
+#### Prerequisites: Docker, Kubernetes
+
+Environment variables for a react app could be stored
+in parameters store of a cloud ecosystem or supplied directly within a deployment config, as demonstrated in this solution. 
+
+To test deploying the app with a development or a production config:
+1. go to /src/react-app `cd ./src/react-app`
+2. build a docker image `docker build -t app:0.0.1 .`
+3. make sure right environment variable values provided in "env:" section
+4. apply a deployment config `kubectl apply -f k8s/deployment.dev.yml` or for production: `kubectl apply -f k8s/deployment.prod.yml`
+5. wait a few seconds for the pods to initiate
+6. enable port forwarding: `kubectl port-forward deployment/app 3000:3000`
+
+These steps should deploy a docker image to a Kubernetes cluster and run a react app on 3000 port displaying the provided env variables values
+
+1. A description of how your implementtion would work, e.g. a docker file or a deployment config 
+   A list of steps how test and deploy is mentioned above.
+2. A list of steps you need to take to change the FQDN of the API (API_BASE_URL) for production or staging
+   1. redeploy docker on the cluster applying a config with changed REACT_APP_FQDN value `kubectl apply -f k8s/deployment.[prod|dev].yml`
+3. How would you handle new versions of the API?
+   1. redeploy docker on the cluster applying a config with changed REACT_APP_VERSION value `kubectl apply -f k8s/deployment.[prod|dev].yml`
